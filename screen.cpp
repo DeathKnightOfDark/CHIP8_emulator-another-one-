@@ -31,7 +31,7 @@ void emulatorScreen::redrawShapes()
 			pixelPosition.y = startingPose.y + 3+ j * sizeOfPixel.y;
 			if (drawPixelsWithSpaceBetween)
 			{
-				pixelsShapes[key].setOutlineColor(sf::Color::Black);
+				pixelsShapes[key].setOutlineColor(sf::Color::Color(59,59,59,255));
 				pixelsShapes[key].setOutlineThickness(1);
 			}
 			else
@@ -81,4 +81,20 @@ void emulatorScreen::setBorder(bool borderCond)
 {
 	drawPixelsWithSpaceBetween = borderCond;
 	redrawShapes();
+}
+
+bool emulatorScreen::getPixel(pixelPos pixelPosition)
+{
+	if ((std::get<0>(pixelPosition) < EMULATOR_WIDTH_PIXELS) && (std::get<1>(pixelPosition) < EMULATOR_HEIGHT_PIXELS))
+	{
+		return this->pixels[pixelPosition];
+	}
+	else return false;
+}
+void emulatorScreen::reversePixel(pixelPos pixelPosition)
+{
+	if ((std::get<0>(pixelPosition) < EMULATOR_WIDTH_PIXELS) && (std::get<1>(pixelPosition) < EMULATOR_HEIGHT_PIXELS))
+	{
+		this->redrawPixel(pixelPosition, !this->getPixel(pixelPosition));
+	}
 }

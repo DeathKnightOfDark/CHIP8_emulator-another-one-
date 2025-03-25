@@ -19,6 +19,8 @@ public:
 	void render(sf::RenderWindow* windowOnRenderTo);
 	void fillPixels(bool value);
 	void setBorder(bool borderCond);
+	bool getPixel(pixelPos pixelPosition);
+	void reversePixel(pixelPos pixelPosition);
 	private:
 		sf::Vector2f startingPose;
 		sf::Vector2f sizeOfPixel;
