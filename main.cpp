@@ -4,7 +4,9 @@
 #include "chip8.h"
 #include <functional>
 #include "IBM_LOGO_TEST.h"
-
+#include <vector>
+#include <fstream>
+#include <iterator>
 emulatorScreen screen{ sf::Vector2f{2, 2}, sf::Vector2f{10, 10} };
 void clearScreen_wrapper()
 {
@@ -19,6 +21,20 @@ void redrawPixel_wrapper(uint8_t x, uint8_t y)
 {
 	screen.reversePixel(pixelPos{ x,y });
 }
+
+void loadFile(const char* filename, std::vector<char>& vectorToPutData)
+{
+	std::ifstream input;
+	input.open(filename, std::ios::binary);
+	if (input.is_open())
+	{
+		for (char c : std::vector<char>(std::istreambuf_iterator<char>(input), {}))
+		{
+			vectorToPutData.push_back(c);
+		}
+	}
+}
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(10*EMULATOR_WIDTH_PIXELS+10, 10*EMULATOR_HEIGHT_PIXELS+10), "CHIP-8 emulator");
@@ -33,7 +49,12 @@ int main()
 	emul.set_getPixelOnScreen((screenBoolFuncWithPixelPosition)getPixel_wrapper);
 	emul.set_reversePixelOnScreen((screenVoidFuncWithPixelPosition)redrawPixel_wrapper);
 	
-	emul.loadProgrammToMemory(IBMlogo, sizeof(IBMlogo));
+	std::vector<char> programm;
+	//loadFile("ROMS/1-ibm-logo.ch8", programm);
+	loadFile("ROMS/ibm.ch8", programm);
+	if (programm.size() == 0) return -1;
+	emul.loadProgrammToMemory((const uint8_t*)programm.data(), programm.size());
+	//emul.loadProgrammToMemory(IBMlogo, sizeof(IBMlogo));
 
 	//std::cout << sizeof(IBMlogo) << std::endl;
 	int widthcounter = 0, heightcounter = 0;

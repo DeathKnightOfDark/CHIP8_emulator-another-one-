@@ -5,7 +5,7 @@ chip8_emulator::chip8_emulator()
 	emulatorData = new uint8_t[4096];
 	registers = new uint8_t[16];
 	I = 0;
-	PC = 0;
+	PC = 0x200;
 	delayTimer = 0;
 	soundTimer = 0;
 	clearScreen = NULL;
@@ -56,14 +56,14 @@ void chip8_emulator::executeInstruction(uint16_t opcode)
 	case 0x1: 
 	{
 		uint16_t val = secondNibble | thirdNibble | fourthNibble;
-		this->PC = 0x0A + val;
+		this->PC = val;
 		break;
 	}
 	case 0x2:
 	{
 		this->addrStack.push(this->PC);
 		uint16_t val = secondNibble | thirdNibble | fourthNibble;
-		this->PC = 0x0A + val;
+		this->PC = val;
 		break;
 	}
 	case 0x3: 
@@ -120,7 +120,7 @@ void chip8_emulator::executeInstruction(uint16_t opcode)
 			if (vy_value < SCREEN_PIXEL_HEIGHT)
 			{
 				uint8_t x = vx_value;
-				uint8_t spriteData = this->emulatorData[this->I + n_value];
+				uint8_t spriteData = this->emulatorData[this->I + i];
 				for (uint8_t j = 128; j > 0; j>>=1)
 				{
 					if (x < SCREEN_PIXEL_WIDTH)
@@ -143,16 +143,21 @@ void chip8_emulator::executeInstruction(uint16_t opcode)
 	}
 }
 
-void chip8_emulator::loadProgrammToMemory(const uint16_t* source, size_t size)
+void chip8_emulator::loadProgrammToMemory(const uint8_t* source, size_t size)
 {
-	memcpy((void*)&this->emulatorData[0x0A], (const void*)source, (size_t)size);
-	this->PC = 0x0A;
+	memcpy((void*)&this->emulatorData[0x200], (const void*)source, (size_t)size);
+	this->PC = 0x200;
 }
 
 void chip8_emulator::runNextInstruction()
 {
-	uint16_t instruction =  this->emulatorData[this->PC+1]<<8 | (uint16_t)(this->emulatorData[this->PC]) ;
+
+	//uint16_t instruction =  this->emulatorData[this->PC+1]<<8 | (uint16_t)(this->emulatorData[this->PC]) ;
+	uint16_t byte0 = (uint16_t)this->emulatorData[this->PC];
+	uint16_t byte1 = (uint16_t)this->emulatorData[this->PC + 1];
+	uint16_t instruction = byte1 | (byte0 << 8);
 	std::cout << "Executing comand: " << instruction << std::endl;
+	
 	this->PC += 2;
 	
 	executeInstruction(instruction);

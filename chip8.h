@@ -4,6 +4,7 @@
 #define CHIP_8_H
 #include <stack>
 #include <iostream>
+
 /// <summary>
 /// Указатель на функцию без параметров для взаимодействия с экраном
 /// </summary>
@@ -84,7 +85,8 @@ public:
 	void set_clearScreen(screenVoidFuncWithoutParameters func);
 	void set_reversePixelOnScreen(screenVoidFuncWithPixelPosition func);
 	void set_getPixelOnScreen(screenBoolFuncWithPixelPosition func);
-	void loadProgrammToMemory(const uint16_t* source, size_t size);
+	void loadProgrammToMemory(const uint8_t* source, size_t size);
+	
 	void runNextInstruction();
 };
 #endif // !CHIP_8_H
