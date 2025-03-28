@@ -35,20 +35,31 @@ void chip8_emulator::set_getPixelOnScreen(screenBoolFuncWithPixelPosition func)
 {
 	this->getPixelOnScreen = func;
 }
-
+void chip8_emulator::skipInstruction()
+{
+	this->PC += 2;
+}
 void chip8_emulator::executeInstruction(uint16_t opcode)
 {
 	uint8_t command = (uint8_t)((opcode & 0xF000)>>12);
 	uint16_t secondNibble = (opcode & 0x0F00);
 	uint16_t thirdNibble = (opcode & 0x00F0);
 	uint16_t fourthNibble = (opcode & 0x000F);
-	
+	uint16_t secondByte = thirdNibble | fourthNibble;
 	switch (command)
 	{
-		///0x00E0 - clear screen command
+		
 	case 0x0: 
 	{
-		if (clearScreen!=NULL) this->clearScreen();
+		///0x00E0 - clear screen command
+		if (secondByte==0x0E)
+		{
+			if (this->clearScreen != NULL) this->clearScreen();
+		}
+		if (secondByte == 0xEE)
+		{
+			this->PC = (uint16_t)this->addrStack.pop();
+		}
 		
 		break;
 	}
@@ -59,6 +70,7 @@ void chip8_emulator::executeInstruction(uint16_t opcode)
 		this->PC = val;
 		break;
 	}
+	///0x2NNN - subroutine
 	case 0x2:
 	{
 		this->addrStack.push(this->PC);
@@ -69,13 +81,21 @@ void chip8_emulator::executeInstruction(uint16_t opcode)
 	case 0x3: 
 	{
 		uint16_t val = thirdNibble | fourthNibble;
-		if (this->registers[secondNibble] == val) this->PC += 2;
+		if (this->registers[secondNibble] == val) this->skipInstruction();
 		break;
 	}
 	case 0x4:
 	{
 		uint16_t val = thirdNibble | fourthNibble;
-		if (this->registers[secondNibble] != val) this->PC += 2;
+		if (this->registers[secondNibble] != val) this->skipInstruction();
+		break;
+	}
+	case 0x5: 
+	{
+		if (fourthNibble == 0x0)
+		{
+			if (this->registers[secondNibble] == this->registers[thirdNibble >> 4]) this->skipInstruction();
+		}
 		break;
 	}
 		///0x6XNN - set val to register command
@@ -96,6 +116,14 @@ void chip8_emulator::executeInstruction(uint16_t opcode)
 	case 0x8: 
 	{
 		if (fourthNibble==0) this->registers[secondNibble] = this->registers[thirdNibble >> 4];
+		
+	}
+	case 0x9:
+	{
+		if (fourthNibble == 0x0)
+		{
+			if (this->registers[secondNibble] != this->registers[thirdNibble >> 4]) this->skipInstruction();
+		}
 		break;
 	}
 	case 0xA: 
@@ -161,4 +189,9 @@ void chip8_emulator::runNextInstruction()
 	this->PC += 2;
 	
 	executeInstruction(instruction);
+}
+
+void chip8_emulator::performALUoperation(uint16_t secondNibble, uint16_t thirdNibble, uint16_t fourthNibble)
+{
+
 }

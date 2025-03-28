@@ -2,8 +2,9 @@
 
 #ifndef CHIP_8_H
 #define CHIP_8_H
-#include <stack>
+
 #include <iostream>
+#include "stackRealisation.h"
 
 /// <summary>
 /// Указатель на функцию без параметров для взаимодействия с экраном
@@ -54,7 +55,7 @@ private:
 	/// <summary>
 	/// address stack
 	/// </summary>
-	std::stack<uint16_t> addrStack;
+	custom_stack addrStack;
 
 	/// <summary>
 	/// delay timer
@@ -77,7 +78,8 @@ private:
 	//screenVoidFuncWithPixelPosition reversePixelOnScreen;
 	screenVoidFuncWithPixelPosition reversePixelOnScreen;
 	screenBoolFuncWithPixelPosition getPixelOnScreen;
-	
+	void skipInstruction();
+	void performALUoperation(uint16_t secondNibble, uint16_t thirdNibble, uint16_t fourthNibble);
 public:
 	chip8_emulator();
 	~chip8_emulator();

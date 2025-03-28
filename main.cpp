@@ -42,6 +42,9 @@ int main()
 	shape.setFillColor(sf::Color::White);
 	shape.setPosition(sf::Vector2f{40, 40});
 	int counter = 0;
+
+
+	
 	screen.setBorder(true);
 	screen.fillPixels(false);
 	chip8_emulator emul;
