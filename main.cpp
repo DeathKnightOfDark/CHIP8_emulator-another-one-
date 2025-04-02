@@ -1,3 +1,4 @@
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "screen.h"
@@ -7,6 +8,8 @@
 #include <vector>
 #include <fstream>
 #include <iterator>
+#include <cstdio>
+
 emulatorScreen screen{ sf::Vector2f{2, 2}, sf::Vector2f{10, 10} };
 void clearScreen_wrapper()
 {
@@ -20,6 +23,10 @@ bool getPixel_wrapper(uint8_t x, uint8_t y)
 void redrawPixel_wrapper(uint8_t x, uint8_t y)
 {
 	screen.reversePixel(pixelPos{ x,y });
+}
+uint8_t generateRandomNumber()
+{
+	return (uint8_t)(rand() % (256));
 }
 
 void loadFile(const char* filename, std::vector<char>& vectorToPutData)
@@ -43,7 +50,6 @@ int main()
 	shape.setPosition(sf::Vector2f{40, 40});
 	int counter = 0;
 
-
 	
 	screen.setBorder(true);
 	screen.fillPixels(false);
@@ -51,10 +57,12 @@ int main()
 	emul.set_clearScreen((screenVoidFuncWithoutParameters)clearScreen_wrapper);
 	emul.set_getPixelOnScreen((screenBoolFuncWithPixelPosition)getPixel_wrapper);
 	emul.set_reversePixelOnScreen((screenVoidFuncWithPixelPosition)redrawPixel_wrapper);
+	emul.set_generateRandomNumber((randomNumberGenerationFunction)generateRandomNumber);
 	
 	std::vector<char> programm;
 	//loadFile("ROMS/1-ibm-logo.ch8", programm);
-	loadFile("ROMS/ibm.ch8", programm);
+	//loadFile("ROMS/ibm.ch8", programm);
+	loadFile("ROMS/Particle Demo [zeroZshadow, 2008].ch8", programm);
 	if (programm.size() == 0) return -1;
 	emul.loadProgrammToMemory((const uint8_t*)programm.data(), programm.size());
 	//emul.loadProgrammToMemory(IBMlogo, sizeof(IBMlogo));
@@ -63,6 +71,9 @@ int main()
 	int widthcounter = 0, heightcounter = 0;
 	
 	std::function<void(emulatorScreen*, bool)> f = &emulatorScreen::fillPixels;
+	
+	
+
 	
 	//screen.fillPixels(false);
 	//f(&screen, true);
