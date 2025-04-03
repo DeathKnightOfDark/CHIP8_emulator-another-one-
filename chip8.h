@@ -127,7 +127,7 @@ public:
 	void set_checkIsKeyPressed(functionToCheckIsKeyPressed func);
 	void set_getPressedKey(getCurrentPressedKey func);
 	void loadProgrammToMemory(const uint8_t* source, size_t size);
-	void performALUoperation(uint16_t secondNibble, uint16_t thirdNibble, uint16_t fourthNibble);
+	void performALUoperation(uint8_t secondNibble, uint8_t thirdNibble, uint8_t fourthNibble);
 	void runNextInstruction();
 #ifdef DEBUG_MODE 
 	uint8_t getRegisterVal(uint16_t registerNumber);
