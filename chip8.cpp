@@ -232,6 +232,7 @@ void chip8_emulator::executeInstruction(uint16_t opcode)
 			/// skip, if key with the code from registers[X] IS NOT pressed
 			if (secondByte == 0xA1)
 			{
+				std::cout << (int)this->registers[secondNibble_shifted] << std::endl;
 				if (!this->checkIsKeyPressed(this->registers[secondNibble_shifted]))
 					this->PC += 2;
 			}
@@ -447,7 +448,15 @@ void chip8_emulator::performALUoperation(uint8_t secondNibble, uint8_t thirdNibb
 	}
 	}
 }
-
+void chip8_emulator::set_generateRandomNumber(randomNumberGenerationFunction func)
+{
+	this->generateRandomNumber = func;
+}
+void chip8_emulator::decreaseTimers()
+{
+	if (this->delayTimer > 0) this->delayTimer--;
+	if (this->soundTimer > 0) this->soundTimer--;
+}
 #ifdef DEBUG_MODE
 uint8_t chip8_emulator::getRegisterVal(uint16_t registerNumber)
 {
@@ -463,8 +472,5 @@ void chip8_emulator::setRegisterVal(uint16_t registerNumber, uint8_t valToSet)
 	}
 }
 
-void chip8_emulator::set_generateRandomNumber(randomNumberGenerationFunction func)
-{
-	this->generateRandomNumber = func;
-}
+
 #endif

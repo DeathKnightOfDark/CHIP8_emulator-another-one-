@@ -129,6 +129,7 @@ public:
 	void loadProgrammToMemory(const uint8_t* source, size_t size);
 	void performALUoperation(uint8_t secondNibble, uint8_t thirdNibble, uint8_t fourthNibble);
 	void runNextInstruction();
+	void decreaseTimers();
 #ifdef DEBUG_MODE 
 	uint8_t getRegisterVal(uint16_t registerNumber);
 	void setRegisterVal(uint16_t registerNumber, uint8_t valToSet);
